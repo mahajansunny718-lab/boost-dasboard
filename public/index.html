@@ -121,7 +121,9 @@ body{
         <span>Forgot Code</span>
     </div>
 
-    <button class="btn" onclick="boost()">Boost Sell</button>
+<button type="button" class="btn" onclick="login()">
+    Boost Sell
+</button>
 
     <div class="agree">
         ✔ Agree to
@@ -131,6 +133,7 @@ body{
 </div>
 
 <script>
+
 async function login() {
 
     const phone =
@@ -139,22 +142,28 @@ async function login() {
     const password =
         document.querySelector("input[type='password']").value;
 
-    console.log(phone, password);
+    if (!phone || !password) {
+        alert("Enter phone and password");
+        return;
+    }
 
     try {
 
-        const res = await fetch("/login", {
+        const response = await fetch("/login", {
+
             method: "POST",
+
             headers: {
                 "Content-Type": "application/json"
             },
+
             body: JSON.stringify({
                 phone,
                 password
             })
         });
 
-        const data = await res.json();
+        const data = await response.json();
 
         alert(data.message);
 
@@ -162,9 +171,10 @@ async function login() {
 
         console.log(err);
 
-        alert("Frontend Error");
+        alert("Server Error");
     }
 }
+
 </script>
 
 </body>
