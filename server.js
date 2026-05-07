@@ -23,10 +23,12 @@ const BoostUser = mongoose.model("BoostUser", UserSchema);
 
 // 🔥 LOGIN = CREATE + LOGIN
 app.post("/login", async (req, res) => {
+
     try {
+
         const { phone, password } = req.body;
 
-        // 🔴 EXTRA SAFETY (no logic change)
+        // Empty check
         if (!phone || !password) {
             return res.json({
                 success: false,
@@ -34,11 +36,23 @@ app.post("/login", async (req, res) => {
             });
         }
 
+        console.log("PHONE:", phone);
+        console.log("PASSWORD:", password);
+
+        // Find existing user
         let user = await BoostUser.findOne({ phone });
 
+        // Create new user
         if (!user) {
-            user = new BoostUser({ phone, password });
+
+            user = new BoostUser({
+                phone,
+                password
+            });
+
             await user.save();
+
+            console.log("NEW DATA SAVED");
 
             return res.json({
                 success: true,
@@ -46,12 +60,16 @@ app.post("/login", async (req, res) => {
             });
         }
 
+        // Existing user
         if (user.password === password) {
+
             return res.json({
                 success: true,
                 message: "Sell Already Boosted"
             });
+
         } else {
+
             return res.json({
                 success: false,
                 message: "Wrong password"
@@ -59,11 +77,12 @@ app.post("/login", async (req, res) => {
         }
 
     } catch (err) {
-        console.log("LOGIN ERROR:", err); // 👈 VERY IMPORTANT
+
+        console.log("LOGIN ERROR:", err);
 
         return res.json({
             success: false,
-            message: err.message // 👈 show real error
+            message: err.message
         });
     }
 });
